@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace HL7ListenerApplication {
 	class Program {
-		private static int port = 5000;
+		private static int port = 5555;
 		private static string filePath = null;
 		private static bool sendACK = true;
 		private static string passthruHost;
