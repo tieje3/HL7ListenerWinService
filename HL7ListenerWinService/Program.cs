@@ -1,6 +1,6 @@
 ﻿using System.ServiceProcess;
 
-namespace HL7MessageListenerWindowsService
+namespace HL7ListenerWinService
 {
     internal static class Program
     {

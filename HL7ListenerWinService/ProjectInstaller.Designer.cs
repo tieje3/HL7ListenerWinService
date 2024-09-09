@@ -1,4 +1,4 @@
-﻿namespace HL7MessageListenerWindowsService
+﻿namespace HL7ListenerWinService
 {
     partial class ProjectInstaller
     {

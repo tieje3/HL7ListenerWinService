@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace HL7MessageListenerWindowsService
+namespace HL7ListenerWinService
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : System.Configuration.Install.Installer

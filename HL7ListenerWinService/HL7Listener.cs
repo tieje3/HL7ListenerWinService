@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using System.Text;
 
-namespace HL7MessageListenerWindowsService
+namespace HL7ListenerWinService
 {
     public partial class HL7Listener : ServiceBase
     {
