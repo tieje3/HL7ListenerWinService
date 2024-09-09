@@ -16,7 +16,7 @@ namespace HL7ListenerApplication {
 		private TcpListener tcpListener;
 		private Thread tcpListenerThread;
 		private Thread passthruThread;
-//		private Thread passthruAckThread;
+		private Thread passthruAckThread;
 		private int listenerPort;
 		private string archivePath = null;
 		private bool sendACK = true;
@@ -94,48 +94,50 @@ namespace HL7ListenerApplication {
 			}
 			this.LogInformation("TLS: " + this.tlsRequired);
 			// if  a passthru host has been specified, create a new thread to send messages to the PassThru host
-			if (this.passthruHost != null) {
-				// create a connection to the Passthru host if the -PassThru option was specified.
-				try {
-					passthruClient = new TcpClient();
-					remoteEndpoint = new IPEndPoint(IPAddress.Parse(this.PassthruHost), this.passthruPort);
-					passthruClient.ConnectAsync(remoteEndpoint, cancelToken);
-					PassthruClientStream = passthruClient.GetStream();
-					PassthruClientStream.ReadTimeout = TCP_TIMEOUT;
-					PassthruClientStream.WriteTimeout = TCP_TIMEOUT;
-					this.LogInformation("Passing messages onto " + this.passthruHost + ":" + this.passthruPort);
-				}
-				// handle user cancel events
-				catch (System.OperationCanceledException) {
-					LogInformation("Cancel requested. Closing connection to PassThru host " + passthruHost + ":" + passthruPort);
-					passthruClient.Close();
-					passthruClient.Dispose();
-					return true;
-				}
-				// report all other exceptions and exit
-				catch (Exception e) {
-					LogWarning("Unable to create connection to PassThru host " + passthruHost + ":" + passthruPort);
-					LogWarning(e.Message);
-					this.RequestStop();
-					return false;
-				}
-				// create a thread to send messages to the Passsthru host 
-				this.passthruThread = new Thread(new ThreadStart(SendData));
-				passthruThread.Start();
-				// create a thread to receive the ACKs from the passthru host
-				//		this.passthruAckThread = new Thread(new ThreadStart(ReceiveACK));
-				//			passthruAckThread.Start();
-				LogInformation("Connected to PassThru host");
-			}
+			//if (this.passthruHost != null) {
+			//	// create a connection to the Passthru host if the -PassThru option was specified.
+			//	try {
+			//		passthruClient = new TcpClient();
+			//		remoteEndpoint = new IPEndPoint(IPAddress.Parse(this.PassthruHost), this.passthruPort);
+			//		passthruClient.ConnectAsync(remoteEndpoint, cancelToken);
+			//		PassthruClientStream = passthruClient.GetStream();
+			//		PassthruClientStream.ReadTimeout = TCP_TIMEOUT;
+			//		PassthruClientStream.WriteTimeout = TCP_TIMEOUT;
+			//		this.LogInformation("Passing messages onto " + this.passthruHost + ":" + this.passthruPort);
+			//	}
+			//	// handle user cancel events
+			//	catch (System.OperationCanceledException) {
+			//		LogInformation("Cancel requested. Closing connection to PassThru host " + passthruHost + ":" + passthruPort);
+			//		passthruClient.Close();
+			//		passthruClient.Dispose();
+			//		return true;
+			//	}
+			//	// report all other exceptions and exit
+			//	catch (Exception e) {
+			//		LogWarning("Unable to create connection to PassThru host " + passthruHost + ":" + passthruPort);
+			//		LogWarning(e.Message);
+			//		this.RequestStop();
+			//		return false;
+			//	}
+			//	// create a thread to send messages to the Passsthru host 
+			//	this.passthruThread = new Thread(new ThreadStart(SendData));
+			//	passthruThread.Start();
+			//	// create a thread to receive the ACKs from the passthru host
+			//	//		this.passthruAckThread = new Thread(new ThreadStart(ReceiveACK));
+			//	//			passthruAckThread.Start();
+			//	LogInformation("Connected to PassThru host");
+			//}
 
-			while (!Console.KeyAvailable) {
-				ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-				if (keyInfo.Key == ConsoleKey.Escape) {
-					LogInformation("Exiting.");
-					this.RequestStop();
-					return true;
-				}
-			}
+			//while (!Console.KeyAvailable)
+			//{
+			//ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+			//if (keyInfo.Key == ConsoleKey.Escape)
+			//{
+			//	LogInformation("Exiting.");
+			//	this.RequestStop();
+			//	return true;
+			//}
+			//}
 			return true;
 		}
 
@@ -163,7 +165,7 @@ namespace HL7ListenerApplication {
 				this.tcpListener.Start();
 				// run the thread unless a request to stop is received
 				while (this.runThread) {
-					TcpClient client = this.tcpListener.AcceptTcpClientAsync(cancelToken).Result;
+					TcpClient client = this.tcpListener.AcceptTcpClientAsync().Result;
 					this.LogInformation("New client connection accepted from " + client.Client.RemoteEndPoint);
 					if (this.tlsRequired) {
 						clientThread = new Thread(new ParameterizedThreadStart(ReceiveTLSData));
@@ -450,17 +452,17 @@ namespace HL7ListenerApplication {
 						byte[] buffer = encoder.GetBytes(messageString.ToString().ToCharArray());
 
 						// if the client connection has timed out, or the remote host has disconnected, reconnect.
-						if (!this.PassthruClientStream.CanWrite) {
-							LogInformation("Connection to passthru host has closed. Reconnecting to " + this.passthruHost + ":" + this.passthruPort);
-							this.passthruClient.Close();
-							this.passthruClient = new TcpClient();
-							this.remoteEndpoint = new IPEndPoint(IPAddress.Parse(this.PassthruHost), this.passthruPort);
-							this.passthruClient.ConnectAsync(remoteEndpoint, cancelToken);
+						//if (!this.PassthruClientStream.CanWrite) {
+						//	LogInformation("Connection to passthru host has closed. Reconnecting to " + this.passthruHost + ":" + this.passthruPort);
+						//	this.passthruClient.Close();
+						//	this.passthruClient = new TcpClient();
+						//	this.remoteEndpoint = new IPEndPoint(IPAddress.Parse(this.PassthruHost), this.passthruPort);
+						//	this.passthruClient.ConnectAsync(remoteEndpoint, cancelToken);
 
-							this.PassthruClientStream = passthruClient.GetStream();
-							this.PassthruClientStream.ReadTimeout = TCP_TIMEOUT;
-							this.PassthruClientStream.WriteTimeout = TCP_TIMEOUT;
-						}
+						//	this.PassthruClientStream = passthruClient.GetStream();
+						//	this.PassthruClientStream.ReadTimeout = TCP_TIMEOUT;
+						//	this.PassthruClientStream.WriteTimeout = TCP_TIMEOUT;
+						//}
 						LogInformation("Sending message to PassThru host " + this.passthruHost + ":" + this.passthruPort);
 						this.PassthruClientStream.WriteAsync(buffer, 0, buffer.Length, cancelToken);
 						bytesRead = this.PassthruClientStream.ReadAsync(receiveBuffer, 0, 4096, cancelToken).Result;

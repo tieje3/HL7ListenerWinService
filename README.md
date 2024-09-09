@@ -1,4 +1,6 @@
-# HL7Listener
+# HL7 Listener Window Service
+
+This is a Window Service with minimal differences from the forked command line application.
 
 ## Project Description
 This is a command line application that listens for MLLP framed HL7 messages.  Any HL7 messages received are written to disk. This is intended as a simple diagnostic app to capture a stream of HL7 messages to disk for offline analysis/troubleshooting. Not intended for production use.
